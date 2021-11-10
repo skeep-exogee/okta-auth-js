@@ -2372,6 +2372,27 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@okta/okta-auth-js@*":
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/@okta/okta-auth-js/-/okta-auth-js-5.8.0.tgz#e80a550e7850f3bc89ea3d6bcd6a66a95f8702f5"
+  integrity sha512-gkQ3/IOlG10FsE7h3GCN38BJGv7QZqr8clh5dpmjmZ4L1xtFwoDuk1VP0iaHtxr3UhsOG/wxNx17tnFAuSjeoQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@okta/okta-idx-js" "0.22.0"
+    "@peculiar/webcrypto" "1.1.6"
+    Base64 "1.1.0"
+    atob "^2.1.2"
+    btoa "^1.2.1"
+    core-js "^3.6.5"
+    cross-fetch "^3.0.6"
+    js-cookie "2.2.1"
+    node-cache "^5.1.2"
+    p-cancelable "^2.0.0"
+    text-encoding "^0.7.0"
+    tiny-emitter "1.1.0"
+    webcrypto-shim "^0.1.5"
+    xhr2 "0.1.3"
+
 "@okta/okta-idx-js@0.22.0":
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/@okta/okta-idx-js/-/okta-idx-js-0.22.0.tgz#c5dbebd155be2c8a8e2bbceb2e92701b6ba59349"
@@ -4956,11 +4977,11 @@ axe-core@^4.0.2:
   integrity sha512-5LMaDRWm8ZFPAEdzTYmgjjEdj1YnQcpfrVajO/sn/LhbpGp0Y0H64c2hLZI1gRMxfA+w1S71Uc/nHaOXgcCvGg==
 
 axios@^0.21.1:
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
-  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
   dependencies:
-    follow-redirects "^1.10.0"
+    follow-redirects "^1.14.0"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -9478,10 +9499,10 @@ flush-write-stream@^1.0.0, flush-write-stream@^1.0.2:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-follow-redirects@^1.0.0, follow-redirects@^1.10.0:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
-  integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
+follow-redirects@^1.0.0, follow-redirects@^1.14.0:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
+  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
 
 for-each@^0.3.3:
   version "0.3.3"
