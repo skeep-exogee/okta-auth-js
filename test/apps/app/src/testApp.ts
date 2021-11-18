@@ -141,7 +141,7 @@ function bindFunctions(testApp: TestApp, window: Window): void {
     renewTokens: testApp.renewTokens.bind(testApp),
     revokeToken: testApp.revokeToken.bind(testApp),
     revokeRefreshToken: testApp.revokeRefreshToken.bind(testApp),
-    handleCallback: testApp.handleCallback.bind(testApp),
+    handleLoginCallback: testApp.handleLoginCallback.bind(testApp),
     getUserInfo: testApp.getUserInfo.bind(testApp),
     testConcurrentGetToken: testApp.testConcurrentGetToken.bind(testApp),
     testConcurrentLogin: testApp.testConcurrentLogin.bind(testApp),
@@ -260,15 +260,22 @@ class TestApp {
     this._afterRender('protected');
   }
 
-  bootstrapCallback(): void {
+  bootstrapLoginCallback(): void {
     const content = `
-      <a id="handle-callback" href="/" onclick="handleCallback(event)">Handle callback (Continue Login)</a>
+      <a id="handle-callback" href="/" onclick="handleLoginCallback(event)">Handle callback (Continue Login)</a>
       <hr/>
       ${homeLink(this)}
     `;
     this.getSDKInstance(/*{ subscribeAuthStateChange: false }*/);
     this._setContent(content);
     this._afterRender('callback');
+  }
+
+  async bootstrapLogoutCallback(): Promise<void> {
+    this.getSDKInstance(/*{ subscribeAuthStateChange: false }*/);
+    await this.oktaAuth.handleLogoutRedirect({
+      redirectTo: () => window.location.replace(window.location.origin)
+    });
   }
 
   async bootstrapHome(): Promise<void> {
@@ -460,7 +467,7 @@ class TestApp {
   }
 
   logoutRedirect(): void {
-    this.oktaAuth.signOut()
+    this.oktaAuth.signOutSSO()
       .catch(e => {
         console.error('Error during signout & redirect: ', e);
       });
@@ -483,7 +490,7 @@ class TestApp {
     window.location.reload();
   }
 
-  async handleCallback(): Promise<void> {
+  async handleLoginCallback(): Promise<void> {
     if (isInteractionRequired(this.oktaAuth)) {
       return this.renderInteractionRequired();
     }
