@@ -92,6 +92,9 @@ function logoutLink(app: TestApp): string {
           <a id="logout-redirect" href="${app.originalUrl}" onclick="logoutRedirect(event)" class="pure-menu-link">Logout (and redirect here)</a>
         </li>
         <li class="pure-menu-item">
+          <a id="logout-redirect-clear-tokens-after-redirect" href="${app.originalUrl}" onclick="logoutRedirect(event, { clearTokensAfterRedirect: true })" class="pure-menu-link">Logout (and redirect here, tokens will be cleared afterward)</a>
+        </li>
+        <li class="pure-menu-item">
           <a id="logout-xhr" href="${app.originalUrl}" onclick="logoutXHR(event)" class="pure-menu-link">Logout (XHR + reload)</a>
         </li>
         <li class="pure-menu-item">
@@ -284,13 +287,6 @@ class TestApp {
     this._afterRender('callback');
   }
 
-  async bootstrapLogoutCallback(): Promise<void> {
-    this.getSDKInstance(/*{ subscribeAuthStateChange: false }*/);
-    await this.oktaAuth.handleLogoutCallback({
-      redirectToApp: () => window.location.replace(window.location.origin)
-    });
-  }
-
   async bootstrapHome(): Promise<void> {
     // Default home page
     this.getSDKInstance();
@@ -479,12 +475,8 @@ class TestApp {
       });
   }
 
-  async logoutRedirect(): Promise<void> {
-    this.oktaAuth
-      .signOutSSO({
-        redirectToOkta: (logoutUri: string) => window.location.assign(logoutUri),
-        redirectToApp: () => window.location.replace(window.location.origin)
-      })
+  async logoutRedirect(options = {}): Promise<void> {
+    this.oktaAuth.signOut(options)
       .catch(e => {
         console.error('Error during signout & redirect: ', e);
       });
