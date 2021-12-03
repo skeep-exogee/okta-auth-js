@@ -143,12 +143,6 @@ describe('idx/run', () => {
       expect(authClient.transactionManager.clear).toHaveBeenCalledTimes(1);
       expect(mocked.interact.interact).toHaveBeenCalled();
     });
-    it('if stateTokenExternalId is passed in options, does not call interact', async () => {
-      const { authClient } = testContext;
-      const stateTokenExternalId = 'fake';
-      await run(authClient, { stateTokenExternalId });
-      expect(mocked.interact.interact).not.toHaveBeenCalled();
-    });
   });
 
   it('returns transaction', async () => {
@@ -339,44 +333,4 @@ describe('idx/run', () => {
     });
   });
 
-  describe('with stateTokenExternalId', () => {
-    describe('with saved interaction handle', () => {
-      beforeEach(() => {
-        const { transactionMeta } = testContext;
-        transactionMeta.interactionHandle = 'meta-interactionHandle';
-        jest.spyOn(mocked.transactionMeta, 'getSavedTransactionMeta').mockReturnValue(transactionMeta);
-      });
-      it('calls introspect with stateTokenExternalId and interactionHandle', async () => {
-        const { authClient, options } = testContext;
-        options.stateTokenExternalId = 'abc';
-        await run(authClient, options);
-        expect(mocked.introspect.introspect).toHaveBeenCalledWith(authClient, { 
-          interactionHandle: 'meta-interactionHandle',
-          stateTokenExternalId: 'abc'
-        });
-      });
-      it('passes `state` option to `getSavedTransactionMeta()`', async () => {
-        const { authClient, options } = testContext;
-        options.stateTokenExternalId = 'abc';
-        options.state = 'def';
-        await run(authClient, options);
-        expect(mocked.transactionMeta.getSavedTransactionMeta).toHaveBeenCalledWith(authClient, { 
-          state: 'def'
-        });
-      });
-    });
-    describe('without saved interaction handle', () => {
-      beforeEach(() => {
-        jest.spyOn(mocked.transactionMeta, 'getSavedTransactionMeta').mockReturnValue(undefined);
-      });
-      it('calls introspect with stateTokenExternalId and no interactionHandle', async () => {
-        const { authClient, options } = testContext;
-        options.stateTokenExternalId = 'abc';
-        await run(authClient, options);
-        expect(mocked.introspect.introspect).toHaveBeenCalledWith(authClient, { 
-          stateTokenExternalId: 'abc'
-        });
-      });
-    });
-  });
 });

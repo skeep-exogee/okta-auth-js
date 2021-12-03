@@ -520,9 +520,14 @@ class TestApp {
   }
 
   async renderEmailVerifyCallback(): Promise<void> {
-    const { state, stateTokenExternalId } = parseEmailVerifyCallback(window.location.search);
+    const { state, otp } = parseEmailVerifyCallback(window.location.search);
     await this.render(true);
-    return this.renderWidget({ state, stateTokenExternalId });
+    if (this.oktaAuth.idx.canProceed({ state })) {
+      return this.renderWidget({ state });
+    }
+    const error = new Error(`Enter the OTP code in the original tab: ${otp}`);
+    this.renderError(error);
+    return;
   }
 
   async getTokensFromUrl(): Promise<TokenResponse> {

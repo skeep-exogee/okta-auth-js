@@ -124,15 +124,6 @@ describe('idx/proceed', () => {
         const { authClient } = testContext;
         await expect(proceed(authClient)).rejects.toThrowError(new AuthSdkError('Unable to proceed: saved transaction could not be loaded'));
       });
-      it('does not throw if stateTokenExternalId is passed', async () => {
-        const { authClient, flowSpec } = testContext;
-        const stateTokenExternalId = 'foo';
-        await proceed(authClient, { stateTokenExternalId });
-        expect(mocked.run.run).toHaveBeenCalledWith(authClient, {
-          ...flowSpec,
-          stateTokenExternalId
-        });
-      });
     });
 
     describe('with saved meta', () => {

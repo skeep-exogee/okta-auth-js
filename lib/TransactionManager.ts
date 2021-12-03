@@ -67,9 +67,8 @@ export default class TransactionManager {
     // clear IDX response storage
     this.clearIdxResponse();
 
-    // Usually we do NOT want to clear shared storage because another tab may need it to continue/complete a flow
-    // It can be cleared after a user succcesfully signs in and receives tokens
-    if (this.enableSharedStorage && options.clearSharedStorage) {
+    // Usually we want to also clear shared storage unless another tab may need it to continue/complete a flow
+    if (this.enableSharedStorage && options.clearSharedStorage !== false) {
       const state = options.state || meta?.state;
       if (state) {
         clearTransactionFromSharedStorage(this.storageManager, state);

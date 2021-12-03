@@ -19,17 +19,11 @@ import { IDX_API_VERSION } from '../constants';
 export interface IntrospectOptions {
   interactionHandle?: string;
   stateHandle?: string;
-  stateTokenExternalId?: string;
 }
 
 export async function introspect (authClient: OktaAuth, options: IntrospectOptions): Promise<IdxResponse> {
-  const useLastResponse = !options.stateTokenExternalId; // email verify callback: must make a new response
-  let rawIdxResponse: RawIdxResponse;
-  
-  if (useLastResponse) {
-    // try load from storage first
-    rawIdxResponse = authClient.transactionManager.loadIdxResponse();
-  }
+  // try load from storage first
+  let rawIdxResponse = authClient.transactionManager.loadIdxResponse();
   
   // call idx.introspect if no existing idx response available in storage
   if (!rawIdxResponse) {

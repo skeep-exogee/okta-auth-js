@@ -37,7 +37,7 @@ export class PasswordRecoveryFlowMonitor extends FlowMonitor {
 
   async isFinished() {
     const { remediations }  = await getTransactionMeta(this.authClient);
-    if (!remediations.includes('reset-authenticator')) {
+    if (!remediations || !remediations.includes('reset-authenticator')) {
       return false;
     }
 

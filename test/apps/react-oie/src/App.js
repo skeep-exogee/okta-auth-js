@@ -1,10 +1,17 @@
 import { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { OktaAuth, IdxStatus } from '@okta/okta-auth-js';
+import { OktaAuth, IdxStatus, urlParamsToObject } from '@okta/okta-auth-js';
 import oidcConfig from './config';
 import './App.css';
 
-const oktaAuth = new OktaAuth(oidcConfig);
+function createOktaAuthInstance() {
+  const { state } = urlParamsToObject(window.location.search);
+  return new OktaAuth(Object.assign({}, oidcConfig, {
+    state
+  }));
+}
+
+const oktaAuth = createOktaAuthInstance();
 
 const formMetaMapper = (nextStep) => {
   const { inputs, options } = nextStep;
@@ -53,9 +60,17 @@ export default function App() {
     }
     
     const handleEmailVerifyCallback = async () => {
-      const { state, stateTokenExternalId } = await oktaAuth.parseEmailVerifyCallback(window.location.search);
-      const newTransaction = await oktaAuth.idx.authenticate({ state, stateTokenExternalId });
-      setTransaction(newTransaction);
+      const { state, otp } = await oktaAuth.parseEmailVerifyCallback(window.location.search);
+      history.push('/');
+      if (oktaAuth.idx.canProceed({ state })) {
+        const newTransaction = await oktaAuth.idx.proceed({ state, otp });
+        setTransaction(newTransaction);
+      } else {
+        setTransaction({
+          status: IdxStatus.FAILURE,
+          error: new Error(`Enter the OTP code in the original tab: ${otp}`)
+        });
+      }
     }
 
     if (oktaAuth.isEmailVerifyCallback(window.location.search)) {
@@ -139,7 +154,11 @@ export default function App() {
   );
   if (!transaction) {
     // initial page
-    return topNav;
+    return (
+      <div>
+        {topNav}
+      </div>
+    );
   }
 
   const { status, nextStep, error, messages, availableSteps, tokens } = transaction;
@@ -159,7 +178,7 @@ export default function App() {
   }
 
   if (status === IdxStatus.FAILURE) {
-    return (<div>{JSON.stringify(error, null, 4)}</div>);
+    return (<div>{error.message || JSON.stringify(error, null, 4)}</div>);
   }
 
   if (status === IdxStatus.TERMINAL) {
@@ -180,7 +199,7 @@ export default function App() {
   return (
     <div>
     {topNav}
-    <strong>{meta.flow || 'default'}</strong>
+    <strong>{meta?.flow || 'default'}</strong>
     <form onSubmit={handleSubmit}>
       <div className="messages">
         { messages && messages.map(message => (<div key={message.message}>{message.message}</div>)) }

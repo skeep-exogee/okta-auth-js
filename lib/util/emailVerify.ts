@@ -15,15 +15,15 @@ import { urlParamsToObject  } from '../oidc/util/urlParams';
 
 export interface EmailVerifyCallbackResponse {
   state: string;
-  stateTokenExternalId: string;
+  otp: string;
 }
 
-// Check if state && stateTokenExternalId have been passed back in the url
+// Check if state && otp have been passed back in the url
 export function isEmailVerifyCallback (urlPath: string): boolean {
-  return /(stateTokenExternalId=)/i.test(urlPath) && /(state=)/i.test(urlPath);
+  return /(otp=)/i.test(urlPath) && /(state=)/i.test(urlPath);
 }
 
-// Parse state and stateTokenExternalId from a urlPath (should be either a search or fragment from the URL)
+// Parse state and otp from a urlPath (should be either a search or fragment from the URL)
 export function parseEmailVerifyCallback(urlPath: string): EmailVerifyCallbackResponse {
   return urlParamsToObject(urlPath) as EmailVerifyCallbackResponse;
 }

@@ -16,6 +16,7 @@ import { Remediator, RemediationValues } from './Remediator';
 export interface VerifyAuthenticatorValues extends RemediationValues {
   verificationCode?: string;
   password?: string;
+  otp?: string;
 }
 
 // Base class - DO NOT expose static remediationName
@@ -28,12 +29,23 @@ export class VerifyAuthenticator extends Remediator {
   };
 
   canRemediate() {
-    return !!(this.values.password || this.values.verificationCode);
+    const challengeType = this.getAuthenticator().type;
+    if (challengeType === 'password') {
+      return !!(this.values.password);
+    }
+    return !!(this.values.verificationCode || this.values.otp);
   }
 
   mapCredentials() {
+    const challengeType = this.getAuthenticator().type;
+    let passcode;
+    if (challengeType === 'password') {
+      passcode = this.values.password;
+    } else {
+      passcode = this.values.verificationCode || this.values.otp;
+    }
     return { 
-      passcode: this.values.verificationCode || this.values.password
+      passcode
     };
   }
 
@@ -50,11 +62,12 @@ export class VerifyAuthenticator extends Remediator {
 
   getValuesAfterProceed() {
     let values = super.getValuesAfterProceed() as VerifyAuthenticatorValues;
-    const authenticator = this.getAuthenticator();
-    if (authenticator.type === 'password') {
+    const challengeType = this.getAuthenticator().type;
+    if (challengeType === 'password') {
       delete values.password;
     } else {
       delete values.verificationCode;
+      delete values.otp;
     }
     return values;
   }

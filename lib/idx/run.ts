@@ -91,13 +91,14 @@ export async function run(
   let availableSteps;
   let status = IdxStatus.PENDING;
   let shouldClearTransaction = false;
+  let clearSharedStorage = true;
   let idxResponse;
   let interactionHandle;
   let metaFromResp;
 
   try {
 
-    const { flow, stateTokenExternalId, state } = options;
+    const { flow, state } = options;
 
     // Only one flow can be operating at a time
     if (flow) {
@@ -108,7 +109,7 @@ export async function run(
     metaFromResp = getSavedTransactionMeta(authClient, { state });
     interactionHandle = metaFromResp?.interactionHandle; // may be undefined
 
-    if (!interactionHandle && !stateTokenExternalId) {
+    if (!interactionHandle) {
       // start a new transaction
       authClient.transactionManager.clear();
       const interactResponse = await interact(authClient, options); 
@@ -117,7 +118,7 @@ export async function run(
     }
 
     // Introspect to get idx response
-    idxResponse = await introspect(authClient, { interactionHandle, stateTokenExternalId });
+    idxResponse = await introspect(authClient, { interactionHandle });
 
     if (!options.remediators && !options.actions) {
       // handle start transaction
@@ -151,6 +152,7 @@ export async function run(
       if (terminal) {
         status = IdxStatus.TERMINAL;
         shouldClearTransaction = true;
+        clearSharedStorage = false; // transaction may be continued in another tab
       } if (canceled) {
         status = IdxStatus.CANCELED;
         shouldClearTransaction = true;
@@ -189,7 +191,7 @@ export async function run(
   }
 
   if (shouldClearTransaction) {
-    authClient.transactionManager.clear();
+    authClient.transactionManager.clear({ clearSharedStorage });
   }
   
   return {

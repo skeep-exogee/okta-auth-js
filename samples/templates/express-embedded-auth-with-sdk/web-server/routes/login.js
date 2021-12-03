@@ -77,13 +77,18 @@ router.get('/login/callback', async (req, res, next) => {
 
   try {
     if (authClient.isEmailVerifyCallback(search)) {
-      const { state, stateTokenExternalId } = authClient.parseEmailVerifyCallback(search);
-      const transaction = await authClient.idx.authenticate({ 
-        state,
-        stateTokenExternalId
-      });
-      handleTransaction({ req, res, next, authClient, transaction });
-      return;
+      const { state, otp } = authClient.parseEmailVerifyCallback(search);
+      if (authClient.idx.canProceed({ state })) {
+        const transaction = await authClient.idx.proceed({ 
+          state
+        });
+        handleTransaction({ req, res, next, authClient, transaction });
+        return;
+      } else {
+        const error = new Error(`Enter the OTP code in the original tab: ${otp}`);
+        next(error);
+        return;
+      }
     }
 
     if (authClient.isInteractionRequired(search)) {

@@ -11,11 +11,11 @@ describe('emailVerify', () => {
     it('returns false if only state exist', () => {
       expect(isEmailVerifyCallback('state=a&foo=bar')).toBe(false);
     });
-    it('returns false if only stateTokenExternalId exist', () => {
-      expect(isEmailVerifyCallback('stateTokenExternalId=a&foo=bar')).toBe(false);
+    it('returns false if only otp exist', () => {
+      expect(isEmailVerifyCallback('otp=a&foo=bar')).toBe(false);
     });
-    it('returns true if both state and stateTokenExternalId exist', () => {
-      expect(isEmailVerifyCallback('state=a&stateTokenExternalId=b')).toBe(true);
+    it('returns true if both state and otp exist', () => {
+      expect(isEmailVerifyCallback('state=a&otp=b')).toBe(true);
     });
   });
 
@@ -24,10 +24,10 @@ describe('emailVerify', () => {
       const res: EmailVerifyCallbackResponse = parseEmailVerifyCallback('');
       expect(res).toEqual({});
     });
-    it('returns state and stateTokenExternalId from a url path passed as a parameter', () => {
-      expect(parseEmailVerifyCallback('state=a&stateTokenExternalId=b')).toEqual({
+    it('returns state and otp from a url path passed as a parameter', () => {
+      expect(parseEmailVerifyCallback('state=a&otp=b')).toEqual({
         state: 'a',
-        stateTokenExternalId: 'b'
+        otp: 'b'
       });
     });
   });
