@@ -41,17 +41,19 @@ export type RegistrationOptions = IdxOptions
 export async function register(
   authClient: OktaAuth, options: RegistrationOptions
 ): Promise<IdxTransaction> {
+  const flowSpec = getFlowSpecification(authClient, 'register');
+
   // Only check at the beginning of the transaction
   if (!transactionMetaExist(authClient)) {
-    const { enabledFeatures } = await startTransaction(authClient, { flow: 'register', ...options });
+    const { flow, sso } = flowSpec; // do not use flowMonitor
+    const { enabledFeatures } = await startTransaction(authClient, { ...options, flow, sso });
     if (enabledFeatures && !enabledFeatures.includes(IdxFeature.REGISTRATION)) {
       const error = new AuthSdkError('Registration is not supported based on your current org configuration.');
       return { status: IdxStatus.FAILURE, error };
     }
   }
 
-  const flowSpec = getFlowSpecification(authClient, 'register');
-  return run(authClient, { 
+  return run(authClient, {
     ...options, 
     ...flowSpec
   });

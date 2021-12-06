@@ -35,6 +35,7 @@ export type RunOptions = ProceedOptions & {
   remediators?: RemediationFlow;
   flowMonitor?: FlowMonitor;
   actions?: string[];
+  sso?: boolean;
 }
 
 function getEnabledFeatures(idxResponse: IdxResponse): IdxFeature[] {
@@ -80,7 +81,9 @@ function getAvailableSteps(remediations: IdxRemediation[]): NextStep[] {
 
 export async function run(
   authClient: OktaAuth, 
-  options: RunOptions = {},
+  options: RunOptions = {
+    sso: true
+  },
 ): Promise<IdxTransaction> {
   let tokens;
   let nextStep;
@@ -98,7 +101,7 @@ export async function run(
 
   try {
 
-    const { flow, state } = options;
+    const { flow, state, scopes } = options;
 
     // Only one flow can be operating at a time
     if (flow) {
@@ -112,13 +115,13 @@ export async function run(
     if (!interactionHandle) {
       // start a new transaction
       authClient.transactionManager.clear();
-      const interactResponse = await interact(authClient, options); 
+      const interactResponse = await interact(authClient, { sso: options.sso, state, scopes }); 
       interactionHandle = interactResponse.interactionHandle;
       metaFromResp = interactResponse.meta;
     }
 
     // Introspect to get idx response
-    idxResponse = await introspect(authClient, { interactionHandle });
+    idxResponse = await introspect(authClient, { sso: metaFromResp?.sso, interactionHandle });
 
     if (!options.remediators && !options.actions) {
       // handle start transaction

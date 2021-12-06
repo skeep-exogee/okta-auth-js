@@ -9,13 +9,14 @@
  *
  * See the License for the specific language governing permissions and limitations under the License.
  */
-
+/* eslint complexity:[0,8] */
 import idx from '@okta/okta-idx-js';
 import { OktaAuth, IdxTransactionMeta } from '../types';
 import { getTransactionMeta, saveTransactionMeta } from './transactionMeta';
 import { getOAuthBaseUrl } from '../oidc';
 
 export interface InteractOptions {
+  sso?: boolean;
   state?: string;
   scopes?: string[];
 }
@@ -55,7 +56,11 @@ export async function interact (authClient: OktaAuth, options: InteractOptions =
   const scopes = options.scopes || authClient.options.scopes || meta.scopes;
 
   const baseUrl = getOAuthBaseUrl(authClient);
+  const sso = options.sso === false ? false : true;
+
   return idx.interact({
+    sso,
+
     // OAuth
     clientId, 
     baseUrl,
@@ -69,6 +74,7 @@ export async function interact (authClient: OktaAuth, options: InteractOptions =
   }).then(interactionHandle => {
     const newMeta = {
       ...meta,
+      sso,
       interactionHandle,
       state,
       scopes

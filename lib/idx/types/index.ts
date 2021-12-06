@@ -80,6 +80,7 @@ export interface IdxTransaction {
 
 export type IdxOptions = InteractOptions & IntrospectOptions & {
   flow?: FlowIdentifier;
+  sso?: boolean;
 };
 
 export type Authenticator = {

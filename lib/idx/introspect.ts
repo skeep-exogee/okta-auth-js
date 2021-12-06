@@ -12,11 +12,12 @@
 
 import idx from '@okta/okta-idx-js';
 import { OktaAuth } from '../types';
-import { IdxResponse, isRawIdxResponse, RawIdxResponse } from './types/idx-js';
+import { IdxResponse, isRawIdxResponse } from './types/idx-js';
 import { getOAuthDomain } from '../oidc';
 import { IDX_API_VERSION } from '../constants';
 
 export interface IntrospectOptions {
+  sso?: boolean;
   interactionHandle?: string;
   stateHandle?: string;
 }
@@ -40,5 +41,6 @@ export async function introspect (authClient: OktaAuth, options: IntrospectOptio
     }
   }
 
-  return idx.makeIdxState(rawIdxResponse);
+  const { sso } = options;
+  return idx.makeIdxState(rawIdxResponse, { sso });
 }
