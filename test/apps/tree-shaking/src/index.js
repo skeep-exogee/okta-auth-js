@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { OktaAuth } from '@okta/okta-auth-js';
 
 const oktaAuth = new OktaAuth({ 
